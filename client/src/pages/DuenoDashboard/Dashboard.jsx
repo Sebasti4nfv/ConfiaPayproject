@@ -333,11 +333,12 @@ function DuenioView({ transactions, sucursales }) {
         </Link>
 
         <Link
-          to="/dashboard/sucursales"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg text-center font-semibold"
+          to="/reportes"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold block text-center"
         >
-          Gestionar sucursales
+          📊 Reportes financieros
         </Link>
+
       </div>
     </div>
   );

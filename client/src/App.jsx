@@ -27,6 +27,7 @@ import SucursalesDashboard from "./pages/DuenoDashboard/SucursalesDashboard";
 
 import OwnerRegister from "./pages/OwnerRegister";
 import TrustScoreDashboard from "./pages/DuenoDashboard/TrustScoreDashboard";
+import ReportePages from "./pages/ReportePages";
 
 import "./styles/global.css";
 
@@ -71,6 +72,14 @@ export default function App() {
               element={<ProtectedRoute roles={["dueño", "admin"]}><ValidacionesList /></ProtectedRoute>}
             />
 
+            <Route
+              path="/reportes"
+              element={
+                <ProtectedRoute roles={["dueño", "admin"]}>
+                  <ReportePages />
+                </ProtectedRoute>
+              }
+            />
             {/* =======================
                 MÓDULO SUCURSALES (solo dueño)
                ======================= */}
