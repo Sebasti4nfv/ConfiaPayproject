@@ -154,11 +154,7 @@ function DuenioView({ transactions, sucursales }) {
       (a, b) =>
         new Date(b.fecha || b.createdAt) - new Date(a.fecha || a.createdAt)
     )
-<<<<<<< HEAD
     .slice(0, 8);  
-=======
-    .slice(0, 8);
->>>>>>> 17d0ec0defc78a11bb25c60fe85ff49a171d0390
 
   return (
     <div className="space-y-6">
@@ -330,11 +326,7 @@ function DuenioView({ transactions, sucursales }) {
         </Link>
 
         <Link
-<<<<<<< HEAD
           to="/dashboard/trustscore"
-=======
-          to="/trustscore"
->>>>>>> 17d0ec0defc78a11bb25c60fe85ff49a171d0390
           className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg text-center font-semibold"
         >
           Análisis financiero / Trust Score
