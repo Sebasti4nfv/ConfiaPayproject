@@ -26,13 +26,11 @@ import CrearVendedorSucursal from "./pages/DuenoDashboard/CrearVendedorSucursal"
 import SucursalesDashboard from "./pages/DuenoDashboard/SucursalesDashboard";
 
 import OwnerRegister from "./pages/OwnerRegister";
-<<<<<<< HEAD
 import TrustScoreDashboard from "./pages/DuenoDashboard/TrustScoreDashboard";
-=======
->>>>>>> 17d0ec0defc78a11bb25c60fe85ff49a171d0390
 
 import "./styles/global.css";
 
+//comentario
 export default function App() {
   return (
     <BrowserRouter>
@@ -58,14 +56,8 @@ export default function App() {
               element={<ProtectedRoute><ValidatePayment /></ProtectedRoute>}
             />
             <Route
-<<<<<<< HEAD
               path="/dashboard/trustscore"
               element={<ProtectedRoute roles={["dueño"]}><TrustScoreDashboard /></ProtectedRoute>}            />
-=======
-              path="/trustscore"
-              element={<ProtectedRoute><TrustScore /></ProtectedRoute>}
-            />
->>>>>>> 17d0ec0defc78a11bb25c60fe85ff49a171d0390
 
             {/* Módulo Vendedor */}
             <Route
