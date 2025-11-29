@@ -1,0 +1,215 @@
+import User from "../models/User.js";
+import Tienda from "../models/Tienda.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+/* ======================================================
+   ROLES PERMITIDOS
+   ====================================================== */
+const ROLES_PERMITIDOS = ["cliente", "vendedor", "admin", "dueño"];
+
+
+/* ======================================================
+   REGISTRO DE CLIENTE / USUARIO GENERAL
+   ====================================================== */
+export const registerUser = async (req, res) => {
+  try {
+    const { name, email, password, role, tienda } = req.body;
+
+    console.log("🟦 registerUser recibido:", req.body);
+
+    // Rol por defecto: cliente
+    const rolFinal = role || "cliente";
+
+    // Validar rol
+    if (!ROLES_PERMITIDOS.includes(rolFinal)) {
+      return res.status(400).json({ message: "Rol no válido." });
+    }
+
+    // Verificar si usuario ya existe
+    const userExistente = await User.findOne({ email });
+    if (userExistente) {
+      return res.status(400).json({ message: "El usuario ya existe" });
+    }
+
+    // Encriptar contraseña
+    const hashed = await bcrypt.hash(password, 10);
+
+    // Crear usuario
+    const nuevoUsuario = await User.create({
+      name,
+      email,
+      password: hashed,
+      role: rolFinal,
+      tienda: tienda || null,   // Solo vendedores y admins tendrán tienda
+      sucursal: null,           // Clientes no necesitan sucursal
+    });
+
+    return res.status(201).json({
+      message: "Usuario registrado exitosamente",
+      userId: nuevoUsuario._id,
+    });
+
+  } catch (error) {
+    console.error("❌ Error en registerUser:", error);
+    return res.status(500).json({ message: "Error al registrar usuario" });
+  }
+};
+
+
+
+/* ======================================================
+   LOGIN GENERAL (DUEÑO / ADMIN / VENDEDOR / CLIENTE)
+   ====================================================== */
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Buscar usuario
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(400).json({ message: "Usuario no encontrado" });
+
+    // Comparar contraseña
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(400).json({ message: "Contraseña incorrecta" });
+
+    // Crear token
+    const token = jwt.sign(
+      {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        tienda: user.tienda || null,
+        sucursal: user.sucursal || null,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        tienda: user.tienda || null,
+        sucursal: user.sucursal || null,
+      },
+    });
+
+  } catch (error) {
+    console.error("❌ Error al iniciar sesión:", error);
+    return res.status(500).json({ message: "Error al iniciar sesión" });
+  }
+};
+
+
+
+/* ======================================================
+   REGISTRO DE DUEÑO + CREACIÓN AUTOMÁTICA DE TIENDA
+   ====================================================== */
+export const registerOwner = async (req, res) => {
+  console.log("🟦 registerOwner recibido...");
+
+  try {
+    const {
+      dni,
+      nombres,
+      apellidos,
+      telefono,
+      email,
+      password,
+
+      nombreTienda,
+      rubro,
+      direccion,
+      descripcion,
+      ruc,
+
+      banco,
+      tipoCuenta,
+      numeroCuenta,
+      cci,
+      titularCuenta,
+      documentoTitular,
+
+      plan,
+    } = req.body;
+
+    // Validación obligatoria
+    if (
+      !dni || !nombres || !apellidos || !telefono ||
+      !email || !password ||
+      !nombreTienda || !rubro || !direccion ||
+      !banco || !tipoCuenta || !numeroCuenta || !cci ||
+      !titularCuenta || !documentoTitular
+    ) {
+      return res.status(400).json({
+        message: "Faltan datos obligatorios para registrar al dueño",
+      });
+    }
+
+    // Verificar usuario existente
+    const existente = await User.findOne({ $or: [{ email }, { dni }] });
+    if (existente) {
+      return res.status(400).json({
+        message: "El correo o DNI ya están registrados",
+      });
+    }
+
+    // Encriptar contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Crear dueño
+    const owner = await User.create({
+      name: `${nombres} ${apellidos}`,
+      email,
+      password: hashedPassword,
+      role: "dueño",
+      dni,
+      telefono,
+      tienda: null,
+      sucursal: null,
+    });
+
+    // Crear tienda asociada al dueño
+    const tienda = await Tienda.create({
+      nombre: nombreTienda,
+      rubro,
+      direccion,
+      descripcion,
+      ruc,
+      owner: owner._id,
+
+      banco,
+      tipoCuenta,
+      numeroCuenta,
+      cci,
+      titularCuenta,
+      documentoTitular,
+
+      plan: plan || "mensual",
+    });
+
+    // Relacionar tienda con el dueño
+    owner.tienda = tienda._id;
+    await owner.save();
+
+    return res.status(201).json({
+      message: "Dueño y tienda registrados correctamente",
+      ownerId: owner._id,
+      tiendaId: tienda._id,
+    });
+
+  } catch (error) {
+    console.error("❌ Error en registerOwner:", error);
+    return res.status(500).json({
+      message: "Error al registrar dueño",
+      error: error.message,
+    });
+  }
+};
