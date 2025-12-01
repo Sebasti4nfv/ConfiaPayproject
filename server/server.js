@@ -9,7 +9,9 @@ import validacionRoutes from "./routes/validacionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import tiendaRoutes from "./routes/tiendasRoutes.js";
 import sucursalesRoutes from "./routes/sucursalesRoutes.js";
-
+import clienteRoutes from "./routes/clienteRoutes.js";
+import vendedorRoutes from "./routes/vendedorRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 console.log("🔥 Server.js cargando rutas…");
 
 dotenv.config();
@@ -62,7 +64,10 @@ app.use("/api/tiendas", tiendaRoutes);
 
 console.log("✔ Cargando ruta /api/sucursales");
 app.use("/api/sucursales", sucursalesRoutes);
-
+// ===== Rutas específicas por rol =====
+app.use("/api/vendedor", vendedorRoutes);
+app.use("/api/cliente", clienteRoutes);
+app.use("/api/admin", adminRoutes);
 // ===== Manejo de Rutas No Encontradas =====
 app.use((req, res) => {
   res.status(404).json({ error: "Ruta no encontrada" });

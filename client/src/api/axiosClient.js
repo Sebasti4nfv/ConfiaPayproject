@@ -11,7 +11,7 @@ const axiosClient = axios.create({
   },
 });
 
-// ⬅️ Agregar token automáticamente a TODAS las peticiones
+// Agregar token automáticamente a TODAS las peticiones
 axiosClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 

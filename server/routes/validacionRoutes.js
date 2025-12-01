@@ -1,6 +1,6 @@
 // server/routes/validacionRoutes.js
 import express from "express";
-import { upload } from "../middleware/uploadMiddleware.js";
+import upload from "../middleware/multer.js"
 import { verificarToken } from "../middleware/authMiddleware.js"; // si ya usas JWT
 import {
   subirComprobante,

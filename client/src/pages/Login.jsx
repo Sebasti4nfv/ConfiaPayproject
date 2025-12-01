@@ -12,13 +12,34 @@ export default function Login() {
   const navigate = useNavigate();
 
   // ⬅️ NUEVO: obtenemos login() del AuthContext
-  const { login } = useAuth();
+  const { login,user  } = useAuth();
 
+// Evitar que un usuario logueado vuelva al login
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) navigate("/dashboard");
-  }, [navigate]);
+    if (user) {
+      redirigirSegunRol(user.role);
+    }
+  }, [user]);
 
+  // 🔥 Función que envía a cada usuario a su pantalla correspondiente
+  const redirigirSegunRol = (role) => {
+    switch (role) {
+      case "cliente":
+        navigate("/cliente/dashboard");
+        break;
+      case "vendedor":
+        navigate("/vendedor/dashboard");
+        break;
+      case "admin":
+        navigate("/admin/dashboard");
+        break;
+      case "dueño":
+        navigate("/dashboard");
+        break;
+      default:
+        navigate("/");
+    }
+  };
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -28,15 +49,14 @@ export default function Login() {
         password,
       });
 
-      // ⬅️ NUEVO: Guardamos token + user de forma PRO
+      //NUEVO: Guardamos token + user de forma PRO
       login(res.data);
 
-      toast.success(`Bienvenido a ConfiaPay 💳`);
-
-      navigate("/dashboard");
+      toast.success(`Bienvenido, ${res.data.user.name} 👋`);
+      redirigirSegunRol(res.data.user.role);
     } catch (error) {
       console.error("❌ Error login:", error.response?.data || error);
-      toast.error("Credenciales incorrectas ❌");
+      toast.error(error.response?.data?.message || "Credenciales incorrectas ❌");
     }
   };
 
@@ -97,9 +117,14 @@ export default function Login() {
             Regístrate
           </Link>
         </p>
-        <p>
-          ¿Eres dueño?  
-          <Link to="/register-owner">Registra tu tienda aquí</Link>
+        <p className="mt-1 text-gray-600">
+          ¿Eres dueño?{" "}
+          <Link
+            to="/register-owner"
+            className="text-green-700 font-semibold hover:underline"
+          >
+            Registra tu tienda aquí
+          </Link>
         </p>
 
       </motion.div>

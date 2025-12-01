@@ -35,23 +35,23 @@ export default function Register() {
     }
   };
 
-  return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 to-blue-300">
+return (
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-200 to-blue-400">
       <motion.form
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.6 }}
         onSubmit={handleRegister}
-        className="bg-white p-10 rounded-2xl shadow-xl w-[400px]"
+        className="bg-white p-8 rounded-2xl shadow-xl w-[400px]"
       >
         <h2 className="text-2xl font-bold text-blue-700 mb-6 text-center">
-          Registro de Cliente
+          Crear Cuenta de Cliente
         </h2>
 
         <input
           name="name"
           placeholder="Nombre completo"
-          className="input w-full mb-3"
+          className="input w-full mb-4 border rounded-lg p-3 focus:ring-2 focus:ring-blue-300"
           onChange={handleChange}
           required
         />
@@ -60,7 +60,7 @@ export default function Register() {
           type="email"
           name="email"
           placeholder="Correo electrónico"
-          className="input w-full mb-3"
+          className="input w-full mb-4 border rounded-lg p-3 focus:ring-2 focus:ring-blue-300"
           onChange={handleChange}
           required
         />
@@ -69,25 +69,39 @@ export default function Register() {
           type="password"
           name="password"
           placeholder="Contraseña"
-          className="input w-full mb-3"
+          className="input w-full mb-6 border rounded-lg p-3 focus:ring-2 focus:ring-blue-300"
           onChange={handleChange}
           required
         />
 
-        <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+        >
           Crear cuenta
         </button>
 
-        <p className="mt-4 text-center text-gray-600">
-          ¿Eres dueño?{" "}
+        <p className="mt-5 text-center text-gray-600">
+          ¿Eres dueño de una tienda?{" "}
           <Link
             to="/register-owner"
             className="text-blue-700 font-semibold hover:underline"
           >
-            Registra tu tienda aquí
+            Regístrate aquí
+          </Link>
+        </p>
+
+        <p className="mt-2 text-center text-gray-600">
+          ¿Ya tienes cuenta?{" "}
+          <Link
+            to="/"
+            className="text-blue-700 font-semibold hover:underline"
+          >
+            Iniciar sesión
           </Link>
         </p>
       </motion.form>
     </div>
   );
 }
+

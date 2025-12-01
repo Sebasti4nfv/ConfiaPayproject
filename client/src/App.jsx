@@ -7,8 +7,8 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/DuenoDashboard/Dashboard";
 
 import ValidatePayment from "./pages/ValidatePayment";
-import TrustScore from "./pages/TrustScore";
-import VendedorTransaccion from "./pages/VendedorTransaccion";
+import TrustScore from "./pages/TrustScore";//no usado
+import VendedorTransaccion from "./pages/VendedorTransaccion";//no usado
 import ValidacionesList from "./pages/ValidacionesList";
 
 import Navbar from "./components/Navbar";
@@ -28,7 +28,23 @@ import SucursalesDashboard from "./pages/DuenoDashboard/SucursalesDashboard";
 import OwnerRegister from "./pages/OwnerRegister";
 import TrustScoreDashboard from "./pages/DuenoDashboard/TrustScoreDashboard";
 import ReportePages from "./pages/ReportePages";
+//Cliente
+import ClienteHome from "./pages/cliente/ClienteHome";
+import ClienteTienda from "./pages/cliente/ClienteTienda";
+import ClienteVerificar from "./pages/cliente/ClienteVerificar";
+import ClienteConstancia from "./pages/cliente/ClienteConstancia";
+import ClienteDashboard from "./pages/cliente/ClienteDashboard";
+import ClientePerfil from "./pages/cliente/ClientePerfil";
 
+//Vendedor
+import VendedorDashboard from "./pages/vendedor/VendedorDashboard";
+import ValidarVoucher from "./pages/vendedor/ValidarVoucher";
+import RegistrarVenta from "./pages/vendedor/RegistrarVenta";
+
+//Admin (NUEVO)
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminVendedores from "./pages/admin/AdminVendedores";
+import AdminVentasVendedor from "./pages/admin/AdminVentasVendedor";
 import "./styles/global.css";
 
 //comentario
@@ -45,10 +61,14 @@ export default function App() {
             <Route path="/" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/register-owner" element={<OwnerRegister />} />
-            {/* Dashboard general */}
+            {/* Dashboard dueño */}
             <Route
               path="/dashboard"
-              element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
+              element={
+                <ProtectedRoute roles={["dueño"]}>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
             />
 
             {/* Validación de pago / trustscore */}
@@ -62,8 +82,30 @@ export default function App() {
 
             {/* Módulo Vendedor */}
             <Route
-              path="/vendedor"
-              element={<ProtectedRoute roles={["vendedor"]}><VendedorTransaccion /></ProtectedRoute>}
+              path="/vendedor/dashboard"
+              element={
+                <ProtectedRoute roles={["vendedor"]}>
+                  <VendedorDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/vendedor/validar"
+              element={
+                <ProtectedRoute roles={["vendedor"]}>
+                  <ValidarVoucher />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/vendedor/registrar"
+              element={
+                <ProtectedRoute roles={["vendedor"]}>
+                  <RegistrarVenta />
+                </ProtectedRoute>
+              }
             />
 
             {/* Validaciones administrativas */}
@@ -118,6 +160,55 @@ export default function App() {
             <Route
               path="/dashboard/sucursales/:id/crear-vendedor"
               element={<ProtectedRoute roles={["dueño", "admin"]}><CrearVendedorSucursal /></ProtectedRoute>}
+            />
+
+            {/* =======================
+                CLIENTES
+               ======================= */}
+            <Route path="/cliente" element={<ClienteHome />} />
+            <Route path="/cliente/tienda/:id" element={<ClienteTienda />} />
+            <Route path="/cliente/verificar/:id" element={<ClienteVerificar />} />
+            <Route path="/cliente/constancia/:id" element={<ClienteConstancia />} />
+
+            <Route
+              path="/cliente/dashboard"
+              element={
+                <ProtectedRoute roles={["cliente"]}>
+                  <ClienteDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="/cliente/perfil" element={<ClientePerfil />} />
+
+            {/* =======================
+                ADMINISTRADOR DE SUCURSALES
+               ======================= */}
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute roles={["admin"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/sucursal/:id/vendedores"
+              element={
+                <ProtectedRoute roles={["admin"]}>
+                  <AdminVendedores />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/vendedor/:id/ventas"
+              element={
+                <ProtectedRoute roles={["admin"]}>
+                  <AdminVentasVendedor />
+                </ProtectedRoute>
+              }
             />
           </Routes>
         </main>

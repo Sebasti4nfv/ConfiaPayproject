@@ -24,7 +24,6 @@ router.delete("/:userId", verificarToken, eliminarUsuario);
 router.post("/crear-vendedor", verificarToken, crearVendedor);
 router.post("/crear-admin", verificarToken, crearAdmin);
 
-// 🔹 Obtener todos los usuarios (para pruebas)
 router.get("/", verificarToken, obtenerUsuarios);
 
 export default router;

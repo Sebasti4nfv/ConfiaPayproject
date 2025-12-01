@@ -44,7 +44,7 @@ export const subirComprobante = async (req, res) => {
 export const obtenerValidaciones = async (req, res) => {
   try {
     const validaciones = await Validacion.find()
-      .populate("vendedorId", "name email tienda role") // 👈 agrega esta línea
+      .populate("vendedorId", "name email tienda role") //
       .sort({ creadoEn: -1 });
 
     res.json(validaciones);

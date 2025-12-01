@@ -3,35 +3,51 @@ import Tienda from "../models/Tienda.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+const ROLES_PERMITIDOS = ["cliente", "vendedor", "admin", "dueño"];
 /* ======================================================
-   REGISTRO DE CLIENTE
+   REGISTRO DE CLIENTE / USUARIO GENERAL
    ====================================================== */
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, role, tienda } = req.body;
 
-    const userExistente = await User.findOne({ email });
-    if (userExistente)
-      return res.status(400).json({ message: "El usuario ya existe" });
+    console.log("🟦 registerUser recibido:", req.body);
 
+    // Rol por defecto: cliente
+    const rolFinal = role || "cliente";
+
+    // Validar rol
+    if (!ROLES_PERMITIDOS.includes(rolFinal)) {
+      return res.status(400).json({ message: "Rol no válido." });
+    }
+
+    // Verificar si usuario ya existe
+    const userExistente = await User.findOne({ email });
+    if (userExistente) {
+      return res.status(400).json({ message: "El usuario ya existe" });
+    }
+
+    // Encriptar contraseña
     const hashed = await bcrypt.hash(password, 10);
 
+    // Crear usuario
     const nuevoUsuario = await User.create({
       name,
       email,
       password: hashed,
-      role: role || "cliente",  // cliente por defecto
-      tienda: tienda || null,
-      sucursal: null,
+      role: rolFinal,
+      tienda: tienda || null,   // Solo vendedores y admins tendrán tienda
+      sucursal: null,           // Clientes no necesitan sucursal
     });
 
-    return res
-      .status(201)
-      .json({ message: "Usuario registrado exitosamente" });
+    return res.status(201).json({
+      message: "Usuario registrado exitosamente",
+      userId: nuevoUsuario._id,
+    });
 
   } catch (error) {
     console.error("❌ Error en registerUser:", error);
-    res.status(500).json({ message: "Error al registrar usuario" });
+    return res.status(500).json({ message: "Error al registrar usuario" });
   }
 };
 
@@ -54,6 +70,8 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign(
       {
         id: user._id,
+        name: user.name,
+        email: user.email,
         role: user.role,
         tienda: user.tienda || null,
         sucursal: user.sucursal || null,

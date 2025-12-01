@@ -8,9 +8,14 @@ export default function ProtectedRoute({ children, roles }) {
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-
-  // Rol no permitido → redirigir según caso
+// Si user aún no carga
+  if (!user) {
+    console.log("⏳ Esperando user...");
+    return null;
+  }
+   // Validación de roles
   if (roles && !roles.includes(user.role)) {
+    console.log("⛔ Acceso denegado. Rol actual:", user.role);
     return <Navigate to="/dashboard" replace />;
   }
 
